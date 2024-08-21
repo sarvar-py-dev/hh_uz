@@ -1,0 +1,34 @@
+hh.uz
+1. app larni bolaklash
+shared
+vacancy
+users
+resume
+
+2. pochtaga kod yuboradigan qilish celery orqali (template ni ham togrilash)
+3. region, district fixtures larni qoshish
+4. login, register api
+
+
+TASK
+
+0. pochtaga yuborish va api chiqarish (code bilan username yuborgandan token qaytaradigan)
+1. pytest
+2. fixtures
+3. gitignore
+4. flake8, isort
+5. faker (company, user, favorite, key, vacancy)
+
+python3 manage.py generate --user 15 --key 20 --vacancy 40
+
+login
+
+register
+
+1)
+-phone
+    -password
+
+2)
+-email
+    -password
