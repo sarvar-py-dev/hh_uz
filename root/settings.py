@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
-load_dotenv('.env')
+
+load_dotenv('.env/.env.local')
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
@@ -81,7 +82,10 @@ DATABASES = {
         'USER': os.getenv('PG_USER'),
         'PASSWORD': os.getenv('PG_PASSWORD'),
         'HOST': os.getenv('PG_HOST'),
-        'PORT': os.getenv('PG_PORT')
+        'PORT': os.getenv('PG_PORT'),
+        # "TEST": {
+        #     "MIRROR": "default",
+        # },
     }
 }
 

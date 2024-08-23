@@ -11,7 +11,7 @@ def send_verification_to_email(email: str, code):
     html_message = f"""
     <html>
     <body>
-        <div style="text-align: center;">
+        <div style="text-align: center;">   
             <img src="https://i.hh.uz/logos/svg/hh.ru__min_.svg?v=11032019" alt="logo" style="margin-top: 20px;">
             <p style="font-size: 18px;">{code} — ваш код для авторизации на <a href="https://hh.ru">hh.ru</a>.</p>
             <footer style="margin-top: 40px;">

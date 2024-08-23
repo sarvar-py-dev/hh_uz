@@ -12,7 +12,7 @@ from rest_framework import exceptions
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField, IntegerField, EmailField
 from rest_framework.serializers import Serializer, ModelSerializer
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenObtainSerializer, PasswordField
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -25,9 +25,13 @@ class UserModelSerializer(ModelSerializer):
         fields = 'id', 'email', 'username'
 
 
-class SendCodeSerializer(TokenObtainPairSerializer):
+class SendCodeSerializer(TokenObtainSerializer):
     username = CharField(max_length=25, default='', help_text='Nomer yoki Email')
-    password = CharField(max_length=255, required=False)
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        self.fields["password"] = PasswordField(required=False)
 
     def validate_username(self, value):
         # value - email   phone
@@ -64,5 +68,16 @@ class SendCodeSerializer(TokenObtainPairSerializer):
 class VerifyCodeSerializer(Serializer):
     code = IntegerField()
 
-    def validate_code(self, value):
-        return
+    # def validate(self, attrs):
+    #     username = attrs.get('username')
+    #     code = attrs.get('code')
+    #
+    #     cache_code = str(cache.get(username))
+    #
+    #     if not cache_code:
+    #         raise ValidationError('Code not found or timed out')
+    #
+    #     if code != cache_code:
+    #         raise ValidationError('Code is invalid')
+    #
+    #     return attrs

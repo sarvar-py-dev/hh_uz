@@ -1,11 +1,8 @@
 from random import randint
 
 from django.core.cache import cache
-from django.shortcuts import render
-from rest_framework.generics import GenericAPIView, CreateAPIView, ListAPIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.serializers import SendCodeSerializer, VerifyCodeSerializer
 from users.tasks import send_verification_to_email
@@ -36,4 +33,5 @@ class VerifyCodeAPIView(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         return Response({'ok': 'ok'})

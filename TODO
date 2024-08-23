@@ -18,6 +18,13 @@ TASK
 3. gitignore
 4. flake8, isort
 5. faker (company, user, favorite, key, vacancy)
+factory boy, model bakery
+
+6. settings, .env
+
+poetry
+pipenv
+pip + venv
 
 python3 manage.py generate --user 15 --key 20 --vacancy 40
 
