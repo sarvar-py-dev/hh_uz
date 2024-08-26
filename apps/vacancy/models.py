@@ -4,7 +4,7 @@ from django.db.models import Model, CharField, FloatField, ImageField, BooleanFi
 from django_ckeditor_5.fields import CKEditor5Field
 from mptt.fields import TreeForeignKey
 
-from shared.models import CreatedBaseModel, SlugBaseModel
+from shared.django.models import CreatedBaseModel, SlugBaseModel
 
 
 class Category(SlugBaseModel):

@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
 
-load_dotenv('.env/.env.local')
+load_dotenv(BASE_DIR / '.env/.env.local')
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
@@ -34,7 +34,6 @@ INSTALLED_APPS = [
 
     # Third Party
     'rest_framework',
-    'rest_framework.authtoken',
     'django_filters',
     'drf_spectacular',
     'django_ckeditor_5',
@@ -217,8 +216,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('USER_EMAIL')
 EMAIL_HOST_PASSWORD = os.getenv('PASSWORD_EMAIL')
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-# CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_BROKER_URL = os.getenv('BROKER_URL')
 CELERY_RESULT_BACKEND = 'django-db'
 
 REST_FRAMEWORK = {
@@ -232,6 +230,6 @@ REST_FRAMEWORK = {
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
+        "LOCATION": os.getenv('BROKER_URL'),
     }
 }

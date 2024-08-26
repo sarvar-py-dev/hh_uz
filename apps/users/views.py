@@ -1,12 +1,17 @@
 from random import randint
 
 from django.core.cache import cache
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 
-from users.serializers import SendCodeSerializer, VerifyCodeSerializer
+from users.models import User
+from users.serializers import SendCodeSerializer, VerifyCodeSerializer, UserModelSerializer
 from users.tasks import send_verification_to_email
 
+
+class UserListAPIView(ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserModelSerializer
 
 class SendCodeAPIView(GenericAPIView):
     serializer_class = SendCodeSerializer

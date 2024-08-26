@@ -19,6 +19,11 @@ TASK
 4. flake8, isort
 5. faker (company, user, favorite, key, vacancy)
 factory boy, model bakery
+factory boy
+faker
+django pytest
+
+
 
 6. settings, .env
 
@@ -39,3 +44,6 @@ register
 2)
 -email
     -password
+
+
+

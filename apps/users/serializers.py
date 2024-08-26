@@ -1,20 +1,12 @@
 import re
-from random import randint
 
-from django.contrib.auth.models import update_last_login
-from django.core.cache import cache
+from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError as DjangoValidationError
-
-from django.contrib.auth import authenticate, get_user_model
-from django.core.validators import EmailValidator, validate_email
-from django.utils.translation import gettext_lazy as _
-from rest_framework import exceptions
+from django.core.validators import validate_email
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import CharField, IntegerField, EmailField
+from rest_framework.fields import CharField, IntegerField
 from rest_framework.serializers import Serializer, ModelSerializer
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenObtainSerializer, PasswordField
-from rest_framework_simplejwt.settings import api_settings
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, PasswordField
 
 from users.models import User
 
@@ -25,8 +17,9 @@ class UserModelSerializer(ModelSerializer):
         fields = 'id', 'email', 'username'
 
 
-class SendCodeSerializer(TokenObtainSerializer):
+class SendCodeSerializer(TokenObtainPairSerializer):
     username = CharField(max_length=25, default='', help_text='Nomer yoki Email')
+    password = CharField(max_length=255, required=False)
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
