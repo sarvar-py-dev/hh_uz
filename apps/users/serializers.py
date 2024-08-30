@@ -2,7 +2,7 @@ import re
 from random import randint
 from django.core.cache import cache
 
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import validate_email
 from rest_framework.exceptions import ValidationError
@@ -22,13 +22,12 @@ class UserModelSerializer(ModelSerializer):
 
 
 class SendCodeSerializer(TokenObtainPairSerializer):
-    username = CharField(max_length=25, default='', help_text='Nomer yoki Email')
-    password = CharField(max_length=255, required=False)
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         self.fields["password"] = PasswordField(required=False)
+        self.fields["username"] = CharField(max_length=25, default='Phone or Email', help_text='Phone or Email')
 
     def validate_username(self, value):
         # value - email   phone
@@ -85,12 +84,13 @@ class VerifyCodeSerializer(Serializer):
 
         if code != cache_code:
             raise ValidationError('Code is invalid')
-        self.user = authenticate(self.context['request'], **attrs)
-        refresh = RefreshToken.for_user(self.user)
+        user, created = User.objects.get_or_create(username=username)
+        login(self.context['request'], user)
+        refresh = RefreshToken.for_user(user)
 
         attrs = {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
-            'data': UserModelSerializer(self.user).data
+            'data': UserModelSerializer(user).data
         }
         return attrs

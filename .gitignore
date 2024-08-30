@@ -4,3 +4,4 @@ venv
 apps/resume/migrations
 apps/users/migrations
 apps/vacancy/migrations
+db.sqlite3
