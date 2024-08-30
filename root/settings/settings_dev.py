@@ -1,4 +1,4 @@
-from .settings import *
+from root.settings import *
 
 DEBUG = False
 ENV = 'production'

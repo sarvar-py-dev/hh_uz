@@ -1,4 +1,6 @@
 import re
+from random import randint
+from django.core.cache import cache
 
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -6,9 +8,11 @@ from django.core.validators import validate_email
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField, IntegerField
 from rest_framework.serializers import Serializer, ModelSerializer
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, PasswordField
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, PasswordField, TokenObtainSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from users.models import User
+from users.tasks import send_verification_to_email
 
 
 class UserModelSerializer(ModelSerializer):
@@ -28,17 +32,23 @@ class SendCodeSerializer(TokenObtainPairSerializer):
 
     def validate_username(self, value):
         # value - email   phone
+        code = randint(100_000, 999_999)
         if '@' in value:
             try:
                 validate_email(value)
             except DjangoValidationError as e:
                 raise ValidationError('Email xato!')
+            else:
+                send_verification_to_email.delay(value, code)
+                print('pochtaga yuborildi')
         else:
-            phone = re.sub(r'[^\d]', '', value)
+            value = re.sub(r'[^\d]', '', value)
 
-            if not (len(phone) == 12 and phone.startswith('998')):
+            if not (len(value) == 12 and value.startswith('998')):
                 raise ValidationError('Phone number togri emas!')
+            print(f'Phone: {value}, {code=}')
 
+        cache.set(value, code, timeout=120)
         return value
 
     def validate(self, attrs):
@@ -59,18 +69,28 @@ class SendCodeSerializer(TokenObtainPairSerializer):
 
 
 class VerifyCodeSerializer(Serializer):
+    username = CharField(max_length=255)
     code = IntegerField()
 
-    # def validate(self, attrs):
-    #     username = attrs.get('username')
-    #     code = attrs.get('code')
-    #
-    #     cache_code = str(cache.get(username))
-    #
-    #     if not cache_code:
-    #         raise ValidationError('Code not found or timed out')
-    #
-    #     if code != cache_code:
-    #         raise ValidationError('Code is invalid')
-    #
-    #     return attrs
+    def validate(self, attrs):
+        username = attrs.get('username')
+        code = attrs.get('code')
+
+        if '@' not in username:
+            username = re.sub(r'[^\d]', '', username)
+        cache_code = cache.get(username)
+
+        if not cache_code:
+            raise ValidationError('Code not found or timed out')
+
+        if code != cache_code:
+            raise ValidationError('Code is invalid')
+        self.user = authenticate(self.context['request'], **attrs)
+        refresh = RefreshToken.for_user(self.user)
+
+        attrs = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'data': UserModelSerializer(self.user).data
+        }
+        return attrs

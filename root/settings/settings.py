@@ -4,7 +4,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
 
 load_dotenv(BASE_DIR / '.env/.env.local')
@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django_ckeditor_5',
     'mptt',
     'rest_framework_simplejwt',
+    'django_celery_results',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [

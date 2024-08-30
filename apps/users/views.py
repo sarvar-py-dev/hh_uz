@@ -22,15 +22,7 @@ class SendCodeAPIView(GenericAPIView):
         if hasattr(serializer, 'user') and serializer.user:
             return Response(serializer.validated_data)
 
-        username = serializer.data['username']
-        code = randint(100_000, 999_999)
-        cache.set(username, code, timeout=120)
-        if '@' in username:
-            send_verification_to_email.delay(username, code)
-            print('pochtaga yuborildi')
-        else:
-            print(f'Phone: {username}, {code=}')
-        return Response({'msg': f"{username} ga kod yuborildi"})
+        return Response({'msg': f"{serializer.validated_data['username']} ga kod yuborildi"})
 
 
 class VerifyCodeAPIView(GenericAPIView):

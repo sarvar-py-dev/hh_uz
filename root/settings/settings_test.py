@@ -1,5 +1,5 @@
-from .settings import *
-from .settings import BASE_DIR
+from root.settings import *
+from root.settings import BASE_DIR
 
 SECRET_KEY = 'test'
 ENV = 'test'
